@@ -1,0 +1,337 @@
+1.
+#include <stdio.h>
+
+int find_biggest_if_else(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+#include <stdio.h>
+
+int find_biggest_ternary(int a, int b) {
+    return (a > b) ? a : b;
+}
+2.
+#include <stdio.h>
+
+void print_grade(int score) {
+    if (score >= 90 && score <= 100) {
+        printf("Grade A\n");
+    } else if (score >= 75 && score <= 89) {
+        printf("Grade B\n");
+    } else if (score >= 60 && score <= 74) {
+        printf("Grade C\n");
+    } else if (score >= 50 && score <= 59) {
+        printf("Grade D\n");
+    } else if (score >= 0 && score <= 49) {
+        printf("Grade F\n");
+    } else {
+        printf("Invalid score\n");
+    }
+}
+
+int main() {
+    int student_score = 85;
+    print_grade(student_score);
+
+    return 0;
+}
+3.
+#include <stdio.h>
+
+int main() {
+    int rollNo;
+    char name[50];
+    float physicsMarks, mathMarks, chemistryMarks;
+    float totalMarks, percentage;
+
+    // Read input from the user
+    printf("Enter Roll No: ");
+    scanf("%d", &rollNo);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]s", name);
+
+    printf("Enter Marks of Physics: ");
+    scanf("%f", &physicsMarks);
+
+    printf("Enter Marks of Math: ");
+    scanf("%f", &mathMarks);
+
+    printf("Enter Marks of Chemistry: ");
+    scanf("%f", &chemistryMarks);
+
+    // Calculate total marks and percentage
+    totalMarks = physicsMarks + mathMarks + chemistryMarks;
+    percentage = (totalMarks / 300) * 100;
+
+    // Print the summary
+    printf("\n----- Student Summary -----\n");
+    printf("Roll No: %d\n", rollNo);
+    printf("Name: %s\n", name);
+    printf("Physics Marks: %.2f\n", physicsMarks);
+    printf("Math Marks: %.2f\n", mathMarks);
+    printf("Chemistry Marks: %.2f\n", chemistryMarks);
+    printf("Total Marks: %.2f\n", totalMarks);
+    printf("Percentage: %.2f%%\n", percentage);
+
+    return 0;
+}
+4.
+#include <stdio.h>
+
+int main() {
+    float operand1, operand2, result;
+    char operator;
+
+    // Read input from the user
+    printf("Enter Operand 1: ");
+    scanf("%f", &operand1);
+
+    printf("Enter Operator (+, -, *, /): ");
+    scanf(" %c", &operator);
+
+    printf("Enter Operand 2: ");
+    scanf("%f", &operand2);
+
+    // Perform the calculation based on the operator
+    switch (operator) {
+        case '+':
+            result = operand1 + operand2;
+            break;
+        case '-':
+            result = operand1 - operand2;
+            break;
+        case '*':
+            result = operand1 * operand2;
+            break;
+        case '/':
+            if (operand2 != 0) {
+                result = operand1 / operand2;
+            } else {
+                printf("Error: Division by zero is not allowed.\n");
+                return 1; // Exit the program with an error code
+            }
+            break;
+        default:
+            printf("Error: Invalid operator.\n");
+            return 1; // Exit the program with an error code
+    }
+
+    // Print the result
+    printf("Result: %.2f\n", result);
+
+    return 0;
+}
+5.
+#include <stdio.h>
+
+int bit_operations(int num, int oper_type) {
+    int result;
+
+    switch (oper_type) {
+        case 1:
+            result = num | (1 << 0);  // Set 1st bit
+            break;
+        case 2:
+            result = num & ~(1 << 31);  // Clear 31st bit
+            break;
+        case 3:
+            result = num ^ (1 << 15);  // Toggle 16th bit
+            break;
+        default:
+            printf("Invalid operation type.\n");
+            return num;  // Return the original number without any modification
+    }
+
+    return result;
+}
+
+int main() {
+    int num = 10;
+    int oper_type = 1;
+
+    int result = bit_operations(num, oper_type);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}
+
+level 2.............
+1.
+#include <stdio.h>
+
+int find_greatest(int num1, int num2, int num3) {
+    if (num1 >= num2 && num1 >= num3) {
+        return num1;
+    } else if (num2 >= num1 && num2 >= num3) {
+        return num2;
+    } else {
+        return num3;
+    }
+}
+
+int main() {
+    int num1 = 10;
+    int num2 = 20;
+    int num3 = 15;
+
+    int greatest = find_greatest(num1, num2, num3);
+    printf("The greatest number is: %d\n", greatest);
+
+    return 0;
+}
+2.
+#include <stdio.h>
+
+char get_grade(int marks) {
+    char grade;
+
+    switch (marks) {
+        case 90 ... 100:
+            grade = 'A';
+            break;
+        case 75 ... 89:
+            grade = 'B';
+            break;
+        case 60 ... 74:
+            grade = 'C';
+            break;
+        case 50 ... 59:
+            grade = 'D';
+            break;
+        case 36 ... 49:
+            grade = 'E';
+            break;
+        case 0 ... 35:
+            grade = 'F';
+            break;
+        default:
+            grade = '\0'; // Invalid marks, return null character
+            break;
+    }
+
+    return grade;
+}
+
+int main() {
+    int marks = 68;
+
+    char grade = get_grade(marks);
+
+    switch (grade) {
+        case 'A':
+            printf("Grade A\n");
+            break;
+        case 'B':
+            printf("Grade B\n");
+            break;
+        case 'C':
+            printf("Grade C\n");
+            break;
+        case 'D':
+            printf("Grade D\n");
+            break;
+        case 'E':
+            printf("Grade E\n");
+            break;
+        case 'F':
+            printf("Grade F\n");
+            break;
+        default:
+            printf("Invalid marks\n");
+            break;
+    }
+
+    return 0;
+}
+3.
+#include <stdio.h>
+
+int is_vowel(char ch) {
+    int isVowel;
+
+    switch (ch) {
+        case 'a':
+        case 'e':
+        case 'i':
+        case 'o':
+        case 'u':
+        case 'A':
+        case 'E':
+        case 'I':
+        case 'O':
+        case 'U':
+            isVowel = 1;
+            break;
+        default:
+            isVowel = 0;
+            break;
+    }
+
+    return isVowel;
+}
+
+int main() {
+    char ch = 'e';
+
+    int result = is_vowel(ch);
+
+    if (result == 1) {
+        printf("Vowel\n");
+    } else {
+        printf("Not Vowel\n");
+    }
+
+    return 0;
+}
+4.
+#include <stdio.h>
+#include <ctype.h>
+
+int find_char_type(char ch) {
+    if (isupper(ch)) {
+        return 1;  // 'A' to 'Z'
+    } else if (islower(ch)) {
+        return 2;  // 'a' to 'z'
+    } else if (isdigit(ch)) {
+        return 3;  // '0' to '9'
+    } else if (isgraph(ch)) {
+        return 4;  // Any other printable symbol
+    } else {
+        return 5;  // Non-printable symbol
+    }
+}
+
+int main() {
+    char ch = '7';
+
+    int charType = find_char_type(ch);
+
+    switch (charType) {
+        case 1:
+            printf("Type: 'A' to 'Z'\n");
+            break;
+        case 2:
+            printf("Type: 'a' to 'z'\n");
+            break;
+        case 3:
+            printf("Type: '0' to '9'\n");
+            break;
+        case 4:
+            printf("Type: Any other printable symbol\n");
+            break;
+        case 5:
+            printf("Type: Non-printable symbol\n");
+            break;
+        default:
+            printf("Invalid character type\n");
+            break;
+    }
+
+    return 0;
+}
