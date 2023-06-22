@@ -1,0 +1,657 @@
+level 1.
+1.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+int main() {
+    FILE *sourceFile, *targetFile;
+    char sourceFileName[100], targetFileName[100];
+    char buffer[BUFFER_SIZE];
+    size_t bytesRead;
+
+    printf("Enter the source file name: ");
+    scanf("%s", sourceFileName);
+
+    // Open the source file in read mode
+    sourceFile = fopen(sourceFileName, "rb");
+    if (sourceFile == NULL) {
+        printf("Failed to open the source file.\n");
+        return 1;
+    }
+
+    printf("Enter the target file name: ");
+    scanf("%s", targetFileName);
+
+    // Open the target file in write mode
+    targetFile = fopen(targetFileName, "wb");
+    if (targetFile == NULL) {
+        printf("Failed to create the target file.\n");
+        fclose(sourceFile);
+        return 1;
+    }
+
+    // Copy the contents from source file to target file
+    while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, sourceFile)) > 0) {
+        fwrite(buffer, 1, bytesRead, targetFile);
+    }
+
+    printf("File copied successfully.\n");
+
+    // Close the file handles
+    fclose(sourceFile);
+    fclose(targetFile);
+
+    return 0;
+}
+
+2.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define BUFFER_SIZE 1024
+
+void changeToUpperCase(char *str);
+void changeToLowerCase(char *str);
+void changeToSentenceCase(char *str);
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        printf("Insufficient arguments.\n");
+        printf("Usage: ./cp <option> <source_file> <target_file>\n");
+        return 1;
+    }
+
+    char *option = argv[1];
+    char *sourceFileName = argv[2];
+    char *targetFileName = argv[3];
+
+    FILE *sourceFile = fopen(sourceFileName, "r");
+    if (sourceFile == NULL) {
+        printf("Failed to open the source file.\n");
+        return 1;
+    }
+
+    FILE *targetFile = fopen(targetFileName, "w");
+    if (targetFile == NULL) {
+        printf("Failed to create the target file.\n");
+        fclose(sourceFile);
+        return 1;
+    }
+
+    char buffer[BUFFER_SIZE];
+
+    while (fgets(buffer, BUFFER_SIZE, sourceFile)) {
+        if (strcmp(option, "-u") == 0) {
+            changeToUpperCase(buffer);
+        } else if (strcmp(option, "-l") == 0) {
+            changeToLowerCase(buffer);
+        } else if (strcmp(option, "-s") == 0) {
+            changeToSentenceCase(buffer);
+        }
+
+        fputs(buffer, targetFile);
+    }
+
+    printf("File copied successfully.\n");
+
+    fclose(sourceFile);
+    fclose(targetFile);
+
+    return 0;
+}
+
+void changeToUpperCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = toupper(str[i]);
+    }
+}
+
+void changeToLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+void changeToSentenceCase(char *str) {
+    if (str[0]) {
+        str[0] = toupper(str[0]);
+    }
+
+    for (int i = 1; str[i]; i++) {
+        if (str[i] == ' ' || str[i] == '\n') {
+            if (str[i + 1]) {
+                str[i + 1] = toupper(str[i + 1]);
+            }
+        } else {
+            str[i] = tolower(str[i]);
+        }
+    }
+}
+
+3.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+#define MAX_LINE_LENGTH 256
+
+struct LogEntry {
+    int entryNo;
+    char sensorNo[10];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+};
+
+void extractLogEntries(const char *filename, struct LogEntry logEntries[], int *numEntries);
+void displayLogEntries(const struct LogEntry logEntries[], int numEntries);
+
+int main() {
+    struct LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    extractLogEntries("data.csv", logEntries, &numEntries);
+
+    if (numEntries > 0) {
+        printf("Log Entries:\n");
+        printf("---------------------\n");
+        displayLogEntries(logEntries, numEntries);
+        printf("---------------------\n");
+    } else {
+        printf("No log entries found.\n");
+    }
+
+    return 0;
+}
+
+void extractLogEntries(const char *filename, struct LogEntry logEntries[], int *numEntries) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+
+    // Skip the header line
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file) && *numEntries < MAX_ENTRIES) {
+        token = strtok(line, ",");
+        logEntries[*numEntries].entryNo = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[*numEntries].sensorNo, token);
+
+        token = strtok(NULL, ",");
+        logEntries[*numEntries].temperature = atof(token);
+
+        token = strtok(NULL, ",");
+        logEntries[*numEntries].humidity = atoi(token);
+
+        token = strtok(NULL, ",");
+        logEntries[*numEntries].light = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[*numEntries].timestamp, token);
+
+        (*numEntries)++;
+    }
+
+    fclose(file);
+}
+
+void displayLogEntries(const struct LogEntry logEntries[], int numEntries) {
+    for (int i = 0; i < numEntries; i++) {
+        printf("EntryNo: %d\n", logEntries[i].entryNo);
+        printf("SensorNo: %s\n", logEntries[i].sensorNo);
+        printf("Temperature: %.2f\n", logEntries[i].temperature);
+        printf("Humidity: %d\n", logEntries[i].humidity);
+        printf("Light: %d\n", logEntries[i].light);
+        printf("Timestamp: %s\n", logEntries[i].timestamp);
+        printf("\n");
+    }
+}
+
+level 2.
+1.
+a.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 256
+
+void sortDataFile(const char *filename);
+
+int main() {
+    sortDataFile("data.csv");
+
+    return 0;
+}
+
+void sortDataFile(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    // Read all lines from the file and store them in an array
+    char lines[MAX_LINE_LENGTH][MAX_LINE_LENGTH];
+    int numLines = 0;
+
+    char line[MAX_LINE_LENGTH];
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        strcpy(lines[numLines], line);
+        numLines++;
+    }
+
+    fclose(file);
+
+    // Sort the lines based on the "Temperature" field in descending order
+    for (int i = 0; i < numLines - 1; i++) {
+        for (int j = i + 1; j < numLines; j++) {
+            float temp1, temp2;
+            sscanf(lines[i], "%*[^,],%*[^,],%f", &temp1);
+            sscanf(lines[j], "%*[^,],%*[^,],%f", &temp2);
+
+            if (temp1 < temp2) {
+                char temp[MAX_LINE_LENGTH];
+                strcpy(temp, lines[i]);
+                strcpy(lines[i], lines[j]);
+                strcpy(lines[j], temp);
+            }
+        }
+    }
+
+    // Rewrite the sorted lines back to the file
+    file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Failed to open the file for writing: %s\n", filename);
+        return;
+    }
+
+    for (int i = 0; i < numLines; i++) {
+        fputs(lines[i], file);
+    }
+
+    fclose(file);
+
+    printf("File sorted successfully.\n");
+}
+
+b.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+#define MAX_LINE_LENGTH 256
+
+struct LogEntry {
+    int entryNo;
+    char sensorNo[10];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+};
+
+void sortDataFile(const char *filename);
+
+int main() {
+    sortDataFile("data.csv");
+
+    return 0;
+}
+
+void sortDataFile(const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    struct LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+
+    // Skip the header line
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file) && numEntries < MAX_ENTRIES) {
+        token = strtok(line, ",");
+        logEntries[numEntries].entryNo = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[numEntries
+
+2.
+a.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 256
+
+void updateEntryInDataFile(const char *filename, int entryNo, const char *newData);
+
+int main() {
+    int entryNo = 2;
+    const char *newData = "2,S3,30,100,50,10:30:58";
+
+    updateEntryInDataFile("data.csv", entryNo, newData);
+
+    return 0;
+}
+
+void updateEntryInDataFile(const char *filename, int entryNo, const char *newData) {
+    FILE *file = fopen(filename, "r+");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    long int pos = -1;
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        int currentEntryNo;
+        sscanf(line, "%d", &currentEntryNo);
+        if (currentEntryNo == entryNo) {
+            pos = ftell(file) - strlen(line);
+            break;
+        }
+    }
+
+    if (pos != -1) {
+        fseek(file, pos, SEEK_SET);
+        fputs(newData, file);
+        printf("Entry updated successfully.\n");
+    } else {
+        printf("Entry with EntryNo %d not found.\n", entryNo);
+    }
+
+    fclose(file);
+}
+
+b.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+#define MAX_LINE_LENGTH 256
+
+struct LogEntry {
+    int entryNo;
+    char sensorNo[10];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+};
+
+void updateEntryInDataFile(const char *filename, int entryNo, const struct LogEntry *newEntry);
+
+int main() {
+    int entryNo = 2;
+    struct LogEntry newEntry = {2, "S3", 30.0, 100, 50, "10:30:58"};
+
+    updateEntryInDataFile("data.csv", entryNo, &newEntry);
+
+    return 0;
+}
+
+void updateEntryInDataFile(const char *filename, int entryNo, const struct LogEntry *newEntry) {
+    FILE *file = fopen(filename, "r+");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    struct LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+
+    // Skip the header line
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file) && numEntries < MAX_ENTRIES) {
+        token = strtok(line, ",");
+        logEntries[numEntries].entryNo = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[numEntries
+
+3.
+a.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 256
+
+void deleteEntryInDataFile(const char *filename, int entryNo);
+
+int main() {
+    int entryNo = 2;
+
+    deleteEntryInDataFile("data.csv", entryNo);
+
+    return 0;
+}
+
+void deleteEntryInDataFile(const char *filename, int entryNo) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    FILE *tempFile = fopen("temp.csv", "w");
+    if (tempFile == NULL) {
+        printf("Failed to create temporary file.\n");
+        fclose(file);
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        int currentEntryNo;
+        sscanf(line, "%d", &currentEntryNo);
+        if (currentEntryNo != entryNo) {
+            fputs(line, tempFile);
+        }
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    if (remove(filename) != 0) {
+        printf("Failed to delete the file: %s\n", filename);
+        return;
+    }
+
+    if (rename("temp.csv", filename) != 0) {
+        printf("Failed to rename the temporary file.\n");
+        return;
+    }
+
+    printf("Entry deleted successfully.\n");
+}
+
+b.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+#define MAX_LINE_LENGTH 256
+
+struct LogEntry {
+    int entryNo;
+    char sensorNo[10];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+};
+
+void deleteEntryInDataFile(const char *filename, int entryNo);
+
+int main() {
+    int entryNo = 2;
+
+    deleteEntryInDataFile("data.csv", entryNo);
+
+    return 0;
+}
+
+void deleteEntryInDataFile(const char *filename, int entryNo) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    struct LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+
+    // Skip the header line
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file) && numEntries < MAX_ENTRIES) {
+        token = strtok(line, ",");
+        logEntries[numEntries].entryNo = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[numEntries].sensorNo, token);
+
+        token = strtok(NULL, ",");
+        logEntries[numEntries].temperature = atof
+3.
+a.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 256
+
+void deleteEntryInDataFile(const char *filename, int entryNo);
+
+int main() {
+    int entryNo = 2;
+
+    deleteEntryInDataFile("data.csv", entryNo);
+
+    return 0;
+}
+
+void deleteEntryInDataFile(const char *filename, int entryNo) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    FILE *tempFile = fopen("temp.csv", "w");
+    if (tempFile == NULL) {
+        printf("Failed to create temporary file.\n");
+        fclose(file);
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        int currentEntryNo;
+        sscanf(line, "%d", &currentEntryNo);
+        if (currentEntryNo != entryNo) {
+            fputs(line, tempFile);
+        }
+    }
+
+    fclose(file);
+    fclose(tempFile);
+
+    if (remove(filename) != 0) {
+        printf("Failed to delete the file: %s\n", filename);
+        return;
+    }
+
+    if (rename("temp.csv", filename) != 0) {
+        printf("Failed to rename the temporary file.\n");
+        return;
+    }
+
+    printf("Entry deleted successfully.\n");
+}
+
+b.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_ENTRIES 100
+#define MAX_LINE_LENGTH 256
+
+struct LogEntry {
+    int entryNo;
+    char sensorNo[10];
+    float temperature;
+    int humidity;
+    int light;
+    char timestamp[9];
+};
+
+void deleteEntryInDataFile(const char *filename, int entryNo);
+
+int main() {
+    int entryNo = 2;
+
+    deleteEntryInDataFile("data.csv", entryNo);
+
+    return 0;
+}
+
+void deleteEntryInDataFile(const char *filename, int entryNo) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open the file: %s\n", filename);
+        return;
+    }
+
+    struct LogEntry logEntries[MAX_ENTRIES];
+    int numEntries = 0;
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+
+    // Skip the header line
+    fgets(line, MAX_LINE_LENGTH, file);
+
+    while (fgets(line, MAX_LINE_LENGTH, file) && numEntries < MAX_ENTRIES) {
+        token = strtok(line, ",");
+        logEntries[numEntries].entryNo = atoi(token);
+
+        token = strtok(NULL, ",");
+        strcpy(logEntries[numEntries].sensorNo, token);
+
+        token = strtok(NULL, ",");
+        logEntries[numEntries].temperature = atof
+
