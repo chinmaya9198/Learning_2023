@@ -1,0 +1,217 @@
+level 1
+1.
+#include <stdio.h>
+
+void printIncreasing(int n);
+void printSpaces(int n);
+void printDecreasing(int n);
+
+int main() {
+    int rows;
+    printf("Enter the number of rows: ");
+    scanf("%d", &rows);
+    
+    for (int i = 1; i <= rows; i++) {
+        printIncreasing(i);
+        printSpaces(rows - i);
+        printDecreasing(i);
+        printf("\n");
+    }
+    
+    return 0;
+}
+
+void printIncreasing(int n) {
+    for (int i = 1; i <= n; i++) {
+        printf("%d", i);
+    }
+}
+
+void printSpaces(int n) {
+    for (int i = 1; i <= n; i++) {
+        printf(" ");
+    }
+}
+
+void printDecreasing(int n) {
+    for (int i = n; i >= 1; i--) {
+        printf("%d", i);
+    }
+}
+
+2.
+#include <stdio.h>
+
+void printBits(unsigned int num);
+
+int main() {
+    unsigned int num;
+    printf("Enter a 32-bit integer: ");
+    scanf("%u", &num);
+    
+    printf("Binary representation of %u:\n", num);
+    printBits(num);
+    
+    return 0;
+}
+
+void printBits(unsigned int num) {
+    for (int i = 31; i >= 0; i--) {
+        unsigned int mask = 1 << i;
+        unsigned int bit = (num & mask) >> i;
+        printf("%u", bit);
+        
+        if (i % 8 == 0)
+            printf(" ");
+    }
+}
+
+4.
+#include <stdio.h>
+
+int findLargestNumber(int num);
+
+int main() {
+    int num;
+    printf("Enter a 4-digit number: ");
+    scanf("%d", &num);
+    
+    int largestNum = findLargestNumber(num);
+    
+    printf("Largest number by deleting a single digit: %d\n", largestNum);
+    
+    return 0;
+}
+
+int findLargestNumber(int num) {
+    int largestNum = 0;
+    
+    for (int i = 0; i < 4; i++) {
+        int tempNum = num / (int)pow(10, i + 1) * (int)pow(10, i) + num % (int)pow(10, i);
+        
+        if (tempNum > largestNum) {
+            largestNum = tempNum;
+        }
+    }
+    
+    return largestNum;
+}
+
+5.
+#include <stdio.h>
+
+void findSmallestLargestDigits(int n, ...);
+
+int main() {
+    int n;
+    printf("Enter the number of values: ");
+    scanf("%d", &n);
+    
+    if (n < 2) {
+        printf("Not Valid\n");
+        return 0;
+    }
+    
+    printf("Enter %d numbers: ", n);
+    
+    findSmallestLargestDigits(n);
+    
+    return 0;
+}
+
+void findSmallestLargestDigits(int n, ...) {
+    int smallestDigit = 9;
+    int largestDigit = 0;
+    
+    va_list args;
+    va_start(args, n);
+    
+    for (int i = 0; i < n; i++) {
+        int num = va_arg(args, int);
+        
+        while (num != 0) {
+            int digit = num % 10;
+            
+            if (digit < smallestDigit) {
+                smallestDigit = digit;
+            }
+            
+            if (digit > largestDigit) {
+                largestDigit = digit;
+            }
+            
+            num /= 10;
+        }
+    }
+    
+    va_end(args);
+    
+    if (smallestDigit == largestDigit) {
+        printf("Not Valid\n");
+    } else {
+        printf("Smallest Digit: %d\n", smallestDigit);
+        printf("Largest Digit: %d\n", largestDigit);
+    }
+}
+
+level 2
+1.
+#include <stdio.h>
+
+unsigned char setBit(unsigned char num, int pos);
+unsigned char clearBit(unsigned char num, int pos);
+unsigned char toggleBit(unsigned char num, int pos);
+
+int main() {
+    unsigned char num = 0b10101010;  // Example number
+    
+    // Set bit at position 2
+    num = setBit(num, 2);
+    printf("After setting bit 2: %u\n", num);
+    
+    // Clear bit at position 5
+    num = clearBit(num, 5);
+    printf("After clearing bit 5: %u\n", num);
+    
+    // Toggle bit at position 7
+    num = toggleBit(num, 7);
+    printf("After toggling bit 7: %u\n", num);
+    
+    return 0;
+}
+
+unsigned char setBit(unsigned char num, int pos) {
+    unsigned char mask = 1 << pos;
+    return num | mask;
+}
+
+unsigned char clearBit(unsigned char num, int pos) {
+    unsigned char mask = ~(1 << pos);
+    return num & mask;
+}
+
+unsigned char toggleBit(unsigned char num, int pos) {
+    unsigned char mask = 1 << pos;
+    return num ^ mask;
+}
+
+2.
+#include <stdio.h>
+
+#define DECIMAL_TO_BCD(decimal) (((decimal / 10) << 4) | (decimal % 10))
+
+unsigned char convertToBCD(unsigned char decimal);
+
+int main() {
+    unsigned char decimal = 25;  // Example decimal number
+    
+    unsigned char bcd = convertToBCD(decimal);
+    
+    printf("Decimal: %u\nBCD: %u\n", decimal, bcd);
+    
+    return 0;
+}
+
+unsigned char convertToBCD(unsigned char decimal) {
+    return DECIMAL_TO_BCD(decimal);
+}

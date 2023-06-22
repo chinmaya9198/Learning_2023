@@ -1,0 +1,326 @@
+level.1
+1.
+#include <stdio.h>
+
+struct Box {
+    double length;
+    double width;
+    double height;
+};
+
+double calculateVolume(struct Box *box);
+double calculateSurfaceArea(struct Box *box);
+
+int main() {
+    struct Box box;
+    struct Box *boxPtr = &box;
+
+    // Accessing structure members using the indirection operator (*)
+    (*boxPtr).length = 5.0;
+    (*boxPtr).width = 3.0;
+    (*boxPtr).height = 2.0;
+
+    // Accessing structure members using the dot operator (.)
+    boxPtr->length = 5.0;
+    boxPtr->width = 3.0;
+    boxPtr->height = 2.0;
+
+    printf("Box Length: %.2f\n", boxPtr->length);
+    printf("Box Width: %.2f\n", boxPtr->width);
+    printf("Box Height: %.2f\n", boxPtr->height);
+
+    double volume = calculateVolume(boxPtr);
+    double surfaceArea = calculateSurfaceArea(boxPtr);
+
+    printf("Volume: %.2f\n", volume);
+    printf("Surface Area: %.2f\n", surfaceArea);
+
+    return 0;
+}
+
+double calculateVolume(struct Box *box) {
+    return box->length * box->width * box->height;
+}
+
+double calculateSurfaceArea(struct Box *box) {
+    return 2 * (box->length * box->width + box->length * box->height + box->width * box->height);
+}
+
+2.
+#include <stdio.h>
+
+typedef struct {
+    double real;
+    double imaginary;
+} Complex;
+
+void readComplex(Complex *complex);
+void writeComplex(Complex complex);
+Complex addComplex(Complex num1, Complex num2);
+Complex multiplyComplex(Complex num1, Complex num2);
+
+int main() {
+    Complex num1, num2, sum, product;
+
+    printf("Enter the first complex number:\n");
+    readComplex(&num1);
+
+    printf("\nEnter the second complex number:\n");
+    readComplex(&num2);
+
+    sum = addComplex(num1, num2);
+    printf("\nSum of the two complex numbers: ");
+    writeComplex(sum);
+
+    product = multiplyComplex(num1, num2);
+    printf("\nProduct of the two complex numbers: ");
+    writeComplex(product);
+
+    return 0;
+}
+
+void readComplex(Complex *complex) {
+    printf("Enter the real part: ");
+    scanf("%lf", &(complex->real));
+
+    printf("Enter the imaginary part: ");
+    scanf("%lf", &(complex->imaginary));
+}
+
+void writeComplex(Complex complex) {
+    if (complex.imaginary < 0)
+        printf("%.2f - %.2fi\n", complex.real, -complex.imaginary);
+    else
+        printf("%.2f + %.2fi\n", complex.real, complex.imaginary);
+}
+
+Complex addComplex(Complex num1, Complex num2) {
+    Complex result;
+    result.real = num1.real + num2.real;
+    result.imaginary = num1.imaginary + num2.imaginary;
+    return result;
+}
+
+Complex multiplyComplex(Complex num1, Complex num2) {
+    Complex result;
+    result.real = num1.real * num2.real - num1.imaginary * num2.imaginary;
+    result.imaginary = num1.real * num2.imaginary + num1.imaginary * num2.real;
+    return result;
+}
+
+3.
+#include <stdio.h>
+
+struct Time {
+    int hours;
+    int minutes;
+    int seconds;
+};
+
+struct Time calculateTimeDifference(struct Time t1, struct Time t2);
+
+int main() {
+    struct Time startTime, endTime, difference;
+
+    printf("Enter the start time:\n");
+    printf("Hours: ");
+    scanf("%d", &startTime.hours);
+    printf("Minutes: ");
+    scanf("%d", &startTime.minutes);
+    printf("Seconds: ");
+    scanf("%d", &startTime.seconds);
+
+    printf("\nEnter the end time:\n");
+    printf("Hours: ");
+    scanf("%d", &endTime.hours);
+    printf("Minutes: ");
+    scanf("%d", &endTime.minutes);
+    printf("Seconds: ");
+    scanf("%d", &endTime.seconds);
+
+    difference = calculateTimeDifference(startTime, endTime);
+
+    printf("\nTime difference: %d hours, %d minutes, %d seconds\n",
+           difference.hours, difference.minutes, difference.seconds);
+
+    return 0;
+}
+
+struct Time calculateTimeDifference(struct Time t1, struct Time t2) {
+    struct Time difference;
+
+    // Convert the time periods to seconds
+    int startTimeSeconds = t1.hours * 3600 + t1.minutes * 60 + t1.seconds;
+    int endTimeSeconds = t2.hours * 3600 + t2.minutes * 60 + t2.seconds;
+
+    // Calculate the difference in seconds
+    int totalSeconds = endTimeSeconds - startTimeSeconds;
+
+    // Calculate the hours, minutes, and seconds in the difference
+    difference.hours = totalSeconds / 3600;
+    totalSeconds %= 3600;
+    difference.minutes = totalSeconds / 60;
+    difference.seconds = totalSeconds % 60;
+
+    return difference;
+}
+
+4.
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Student {
+    char name[50];
+    int age;
+    float marks;
+};
+
+int main() {
+    int n;
+    printf("Enter the number of students: ");
+    scanf("%d", &n);
+
+    struct Student *students = (struct Student *)malloc(n * sizeof(struct Student));
+
+    if (students == NULL) {
+        printf("Memory allocation failed!\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        printf("\nEnter details for Student %d:\n", i + 1);
+
+        printf("Name: ");
+        scanf("%s", students[i].name);
+
+        printf("Age: ");
+        scanf("%d", &students[i].age);
+
+        printf("Marks: ");
+        scanf("%f", &students[i].marks);
+    }
+
+    printf("\nStudent Details:\n");
+    for (int i = 0; i < n; i++) {
+        printf("\nDetails for Student %d:\n", i + 1);
+        printf("Name: %s\n", students[i].name);
+        printf("Age: %d\n", students[i].age);
+        printf("Marks: %.2f\n", students[i].marks);
+    }
+
+    free(students);
+
+    return 0;
+}
+
+5.
+#include <stdio.h>
+
+struct Student {
+    char name[50];
+    int age;
+};
+
+void swapFields(struct Student *s1, struct Student *s2);
+
+int main() {
+    struct Student student1, student2;
+
+    printf("Enter details for Student 1:\n");
+    printf("Name: ");
+    scanf("%s", student1.name);
+    printf("Age: ");
+    scanf("%d", &student1.age);
+
+    printf("\nEnter details for Student 2:\n");
+    printf("Name: ");
+    scanf("%s", student2.name);
+    printf("Age: ");
+    scanf("%d", &student2.age);
+
+    printf("\nBefore swapping:\n");
+    printf("Student 1 - Name: %s, Age: %d\n", student1.name, student1.age);
+    printf("Student 2 - Name: %s, Age: %d\n", student2.name, student2.age);
+
+    swapFields(&student1, &student2);
+
+    printf("\nAfter swapping:\n");
+    printf("Student 1 - Name: %s, Age: %d\n", student1.name, student1.age);
+    printf("Student 2 - Name: %s, Age: %d\n", student2.name, student2.age);
+
+    return 0;
+}
+
+void swapFields(struct Student *s1, struct Student *s2) {
+    struct Student temp;
+
+    temp = *s1;
+    *s1 = *s2;
+    *s2 = temp;
+}
+
+level. 2
+1.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SENSORS 10
+#define MAX_STRING_LENGTH 50
+
+struct Sensor {
+    char id[MAX_STRING_LENGTH];
+    float temperature;
+    int humidity;
+    int lightIntensity;
+};
+
+void parseData(const char *data, struct Sensor *sensors, int *numSensors);
+void printSensorInfo(const struct Sensor *sensors, int numSensors);
+
+int main() {
+    const char *data = "S1-T:36.5-H:100-L:50";
+    struct Sensor sensors[MAX_SENSORS];
+    int numSensors = 0;
+
+    parseData(data, sensors, &numSensors);
+    printSensorInfo(sensors, numSensors);
+
+    return 0;
+}
+
+void parseData(const char *data, struct Sensor *sensors, int *numSensors) {
+    char *token;
+    char *tempData = strdup(data);
+    int index = 0;
+
+    token = strtok(tempData, "-");
+    while (token != NULL) {
+        sscanf(token, "S%d-T:%f-H:%d-L:%d",
+               &sensors[index].id[1],
+               &sensors[index].temperature,
+               &sensors[index].humidity,
+               &sensors[index].lightIntensity);
+
+        sprintf(sensors[index].id, "S%d", sensors[index].id[1]);
+
+        index++;
+        token = strtok(NULL, "-");
+    }
+
+    *numSensors = index;
+    free(tempData);
+}
+
+void printSensorInfo(const struct Sensor *sensors, int numSensors) {
+    printf("Sensor Info:\n");
+    printf("---------------------\n");
+
+    for (int i = 0; i < numSensors; i++) {
+        printf("Sensor ID: %s\n", sensors[i].id);
+        printf("Temperature: %.1f C\n", sensors[i].temperature);
+        printf("Humidity: %d\n", sensors[i].humidity);
+        printf("Light Intensity: %d%%\n", sensors[i].lightIntensity);
+        printf("---------------------\n");
+    }
+}
